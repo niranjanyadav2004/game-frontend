@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard - Game Portal</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body style="background: white; min-height: 100vh;">
+<nav class="navbar navbar-dark" style="background: rgba(0,0,0,0.3);">
+  <div class="container">
+    <a class="navbar-brand fw-bold text-white" href="index.html"><i class="fas fa-gamepad me-2"></i>Game Portal</a>
+    <div class="d-flex align-items-center text-white">
+      <span id="navUsername" class="me-3"></span>
+      <button id="logoutBtn" class="btn btn-outline-light btn-sm"><i class="fas fa-sign-out-alt me-1"></i>Logout</button>
+    </div>
+  </div>
+</nav>
+
+<main class="container mt-4">
+  <div id="dashAlert" class="mb-3"></div>
+
+  <!-- Navigation Tabs -->
+  <ul class="nav nav-tabs mb-4" role="tablist">
+    <li class="nav-item" role="presentation">
+      <a id="navHome" class="nav-link active" href="#" role="tab">Home</a>
+    </li>
+    <li class="nav-item" role="presentation">
+      <a id="navLeaderboard" class="nav-link" href="#" role="tab">Leaderboard</a>
+    </li>
+    <li class="nav-item" role="presentation">
+      <a id="navEvents" class="nav-link" href="#" role="tab">Events</a>
+    </li>
+  </ul>
+
+  <!-- HOME SECTION -->
+  <div id="homeSection">
+    <!-- Your Progress Section -->
+    <div class="your-progress-section">
+      <h2><i class="fas fa-chart-line me-2" style="color: #667eea;"></i>Your Progress</h2>
+      <div class="row">
+        <div class="col-md-3 col-sm-6 mb-3">
+          <div class="progress-tile tile-level">
+            <i class="fas fa-arrow-up"></i>
+            <p class="label">Level</p>
+            <p class="value" id="tileLevel">—</p>
+          </div>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+          <div class="progress-tile tile-gold">
+            <i class="fas fa-coins"></i>
+            <p class="label">Gold</p>
+            <p class="value" id="tileGold">—</p>
+          </div>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+          <div class="progress-tile tile-cash">
+            <i class="fas fa-dollar-sign"></i>
+            <p class="label">Cash</p>
+            <p class="value" id="tileCash">—</p>
+          </div>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+          <div class="progress-tile tile-gem">
+            <i class="fas fa-gem"></i>
+            <p class="label">Gem</p>
+            <p class="value" id="tileGem">—</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Progression Meta -->
+    <p id="progressMeta" class="text-muted mb-4"></p>
+
+    <!-- Games Section -->
+    <div class="mb-4">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4>Your Games</h4>
+        <button id="addGameBtn" class="btn btn-primary btn-sm"><i class="fas fa-plus me-1"></i>Add Game</button>
+      </div>
+      <div id="gamesContainer" class="row"></div>
+    </div>
+
+    <!-- Save Progress Section -->
+    <div class="mb-4 text-center">
+      <button id="saveProgressBtn" class="btn btn-info btn-lg"><i class="fas fa-save me-1"></i>Save Progress</button>
+    </div>
+  </div>
+
+  <!-- LEADERBOARD SECTION -->
+  <div id="leaderboardSection" style="display: none;">
+    <!-- Submit Score Section -->
+    <div class="mb-4">
+      <h4>Submit Score</h4>
+      <button id="submitScoreBtn" class="btn btn-success btn-sm"><i class="fas fa-arrow-up me-1"></i>Submit Score</button>
+    </div>
+
+    <div class="card" style="border-radius: 10px;">
+      <div class="card-body">
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="leaderboardGameId" class="form-label">Select Game:</label>
+            <select id="leaderboardGameId" class="form-select">
+              <option value="">Loading games...</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label for="leaderboardCountrySelect" class="form-label">Filter by Country:</label>
+            <select id="leaderboardCountrySelect" class="form-select">
+              <option value="">All Countries</option>
+            </select>
+          </div>
+        </div>
+        <div id="leaderboardAlert" class="mb-3"></div>
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>Player</th>
+              <th>Score</th>
+              <th>Country</th>
+            </tr>
+          </thead>
+          <tbody id="leaderboardBody">
+            <tr><td colspan="4" class="text-center text-muted">Select a game to view leaderboard</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- EVENTS SECTION -->
+  <div id="eventsSection" style="display: none;">
+    <div class="mb-3">
+      <button id="createEventBtn" class="btn btn-warning btn-sm"><i class="fas fa-calendar-plus me-1"></i>Create Event</button>
+    </div>
+    <div id="eventsAlert" class="mb-3"></div>
+    <div id="eventsContainer" class="row"></div>
+  </div>
+</main>
+
+<!-- Modal: Add Game -->
+<div class="modal fade" id="addGameModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Add Game</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div id="addGameAlert" class="mb-3"></div>
+        <form id="addGameForm">
+          <div class="mb-3">
+            <label for="gameName" class="form-label">Game Name</label>
+            <input type="text" id="gameName" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label for="gameDescription" class="form-label">Description</label>
+            <textarea id="gameDescription" class="form-control" rows="3" required></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" id="submitGameBtn" class="btn btn-primary">Add Game</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Save Progress -->
+<div class="modal fade" id="saveProgressModal" tabindex="-1">
+  <div class="modal-dialog modal-sm" style="max-width: 450px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Save Game Progress</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body p-2">
+        <div id="saveProgressAlert" class="mb-2"></div>
+        <form id="saveProgressForm">
+          <div class="mb-2">
+            <label for="progressGameId" class="form-label form-label-sm">Select Game</label>
+            <select id="progressGameId" class="form-select form-select-sm" required>
+              <option value="">Select a game...</option>
+            </select>
+          </div>
+          <div class="mb-2">
+            <label for="progressLevel" class="form-label form-label-sm">Level</label>
+            <input type="number" id="progressLevel" class="form-control form-control-sm" required>
+          </div>
+          <div class="mb-2">
+            <label for="progressGold" class="form-label form-label-sm">Gold</label>
+            <input type="number" id="progressGold" class="form-control form-control-sm" required>
+          </div>
+          <div class="mb-2">
+            <label for="progressCash" class="form-label form-label-sm">Cash</label>
+            <input type="number" id="progressCash" class="form-control form-control-sm" required>
+          </div>
+          <div class="mb-2">
+            <label for="progressGem" class="form-label form-label-sm">Gems</label>
+            <input type="number" id="progressGem" class="form-control form-control-sm" required>
+          </div>
+          <div class="mb-2">
+            <label for="progressRewards" class="form-label form-label-sm">Rewards (JSON)</label>
+            <textarea id="progressRewards" class="form-control form-control-sm" rows="1" placeholder='[{"id":101,"name":"Bronze Chest"}]'></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" id="submitProgressBtn" class="btn btn-primary">Save Progress</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Submit Score -->
+<div class="modal fade" id="submitScoreModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Submit Score</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div id="submitScoreAlert" class="mb-3"></div>
+        <form id="submitScoreForm">
+          <div class="mb-3">
+            <label for="scoreGameId" class="form-label">Select Game</label>
+            <select id="scoreGameId" class="form-select" required>
+              <option value="">Select a game...</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="scoreValue" class="form-label">Score</label>
+            <input type="number" id="scoreValue" class="form-control" required>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" id="submitScoreSubmitBtn" class="btn btn-primary">Submit Score</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Create Event -->
+<div class="modal fade" id="eventModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="eventModalLabel">Create Event</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div id="eventAlert" class="mb-3"></div>
+        <form id="eventForm">
+          <div class="mb-3">
+            <label for="eventGameId" class="form-label">Select Game</label>
+            <select id="eventGameId" class="form-select" required>
+              <option value="">Select a game...</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="eventName" class="form-label">Event Name</label>
+            <input type="text" id="eventName" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label for="eventStartDate" class="form-label">Start Date</label>
+            <input type="datetime-local" id="eventStartDate" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label for="eventEndDate" class="form-label">End Date</label>
+            <input type="datetime-local" id="eventEndDate" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label for="eventMaxScore" class="form-label">Max Score</label>
+            <input type="number" id="eventMaxScore" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label for="eventReward" class="form-label">Reward</label>
+            <input type="text" id="eventReward" class="form-control" required>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" id="submitEventBtn" class="btn btn-primary">Create Event</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="assets/js/dashboard.js"></script>
+</body>
+</html>
